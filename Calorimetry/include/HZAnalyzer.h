@@ -162,6 +162,9 @@ protected:
     std::vector<float>* m_genjet_dij_21=NULL;
     std::vector<float>* m_genjet_dij_32=NULL;
     std::vector<float>* m_genjet_dij_43=NULL;
+    std::vector<float>* m_genjet_dij_21_max=NULL;
+    std::vector<float>* m_genjet_dij_32_max=NULL;
+    std::vector<float>* m_genjet_dij_43_max=NULL;
     std::vector<float>* m_genjet_CHFraction=NULL;
     std::vector<float>* m_genjet_CHFraction_trackPtMin=NULL;
     std::vector<float>* m_genjet_PhFraction=NULL;
@@ -357,6 +360,9 @@ protected:
     std::vector<float>* m_recojet_dij_21=NULL;
     std::vector<float>* m_recojet_dij_32=NULL;
     std::vector<float>* m_recojet_dij_43=NULL;
+    std::vector<float>* m_recojet_dij_21_max=NULL;
+    std::vector<float>* m_recojet_dij_32_max=NULL;
+    std::vector<float>* m_recojet_dij_43_max=NULL;
     std::vector<float>* m_recojet_CHFraction=NULL;
     std::vector<float>* m_recojet_CHFraction_trackPtMin=NULL;
     std::vector<float>* m_recojet_PhFraction=NULL;
@@ -561,6 +567,21 @@ protected:
     float m_true_inv_Py=0;
     float m_true_inv_Pz=0;
     int m_true_inv_Mult=0;
+
+    float m_gen_y21_max=0;
+    float m_gen_y32_max=0;
+    float m_gen_y43_max=0;
+    
+    float m_gen_y21=0;
+    float m_gen_y32=0;
+    float m_gen_y43=0;
+    
+    float m_reco_y21= 0;
+    float m_reco_y32= 0;
+    float m_reco_y43= 0;
+    float m_reco_y21_max= 0;
+    float m_reco_y32_max= 0;
+    float m_reco_y43_max= 0;
 
     void fillStableDaughterSet(MCParticle*, std::set<MCParticle*> &);
      

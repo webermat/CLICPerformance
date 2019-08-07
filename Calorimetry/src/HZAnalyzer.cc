@@ -219,8 +219,24 @@ void HZAnalyzer::init() {
   m_true_inv_Py=0;
   m_true_inv_Pz=0;
   m_true_inv_Mult=0;
+
+
+  m_gen_y21_max=0;
+  m_gen_y32_max=0;
+  m_gen_y43_max=0;
+
+  m_gen_y21=0;
+  m_gen_y32=0;
+  m_gen_y43=0;
+
+  m_reco_y21= 0;
+  m_reco_y32= 0;
+  m_reco_y43= 0;
+  m_reco_y21_max= 0;
+  m_reco_y32_max= 0;
+  m_reco_y43_max= 0;
   
-   m_trueME_E= new std::vector<float>();
+  m_trueME_E= new std::vector<float>();
   m_trueME_Px= new std::vector<float>();
   m_trueME_Py= new std::vector<float>();
   m_trueME_Pz= new std::vector<float>();
@@ -281,6 +297,10 @@ void HZAnalyzer::init() {
   m_genjet_dij_21= new std::vector<float>();
   m_genjet_dij_32= new std::vector<float>();
   m_genjet_dij_43= new std::vector<float>();
+  m_genjet_dij_21_max= new std::vector<float>();
+  m_genjet_dij_32_max= new std::vector<float>();
+  m_genjet_dij_43_max= new std::vector<float>();
+
   m_genjet_CHFraction= new std::vector<float>();
   m_genjet_CHFraction_trackPtMin= new std::vector<float>();
   m_genjet_PhFraction= new std::vector<float>();
@@ -475,6 +495,10 @@ void HZAnalyzer::init() {
   m_recojet_dij_21= new std::vector<float>();
   m_recojet_dij_32= new std::vector<float>();
   m_recojet_dij_43= new std::vector<float>();
+  m_recojet_dij_21_max= new std::vector<float>();
+  m_recojet_dij_32_max= new std::vector<float>();
+  m_recojet_dij_43_max= new std::vector<float>();
+
   m_recojet_CHFraction= new std::vector<float>();
   m_recojet_CHFraction_trackPtMin= new std::vector<float>();
   m_recojet_PhFraction= new std::vector<float>();
@@ -707,6 +731,9 @@ void HZAnalyzer::init() {
   m_genjet_dij_21->clear();
   m_genjet_dij_32->clear();
   m_genjet_dij_43->clear();
+  m_genjet_dij_21_max->clear();
+  m_genjet_dij_32_max->clear();
+  m_genjet_dij_43_max->clear();
   m_genjet_CHFraction->clear();
   m_genjet_CHFraction_trackPtMin->clear();
   m_genjet_PhFraction->clear();
@@ -878,6 +905,9 @@ void HZAnalyzer::init() {
   m_recojet_dij_21->clear();
   m_recojet_dij_32->clear();
   m_recojet_dij_43->clear();
+  m_recojet_dij_21_max->clear();
+  m_recojet_dij_32_max->clear();
+  m_recojet_dij_43_max->clear();
   m_recojet_CHFraction->clear();
   m_recojet_CHFraction_trackPtMin->clear();
   m_recojet_PhFraction->clear();
@@ -1090,6 +1120,22 @@ void HZAnalyzer::init() {
   m_outputTree->Branch("totPFO_MuFraction", &m_totPFO_MuFraction,"totPFO_MuFraction/F");
   m_outputTree->Branch("totPFO_NHFraction", &m_totPFO_NHFraction,"totPFO_NHFraction/F");
 
+  m_outputTree->Branch("gen_y21",&m_gen_y21,"gen_y21/F");
+  m_outputTree->Branch("gen_y32",&m_gen_y32,"gen_y21/F");
+  m_outputTree->Branch("gen_y43",&m_gen_y43,"gen_y21/F");
+
+  m_outputTree->Branch("gen_y21_max",&m_gen_y21_max,"gen_y21_max/F");
+  m_outputTree->Branch("gen_y32_max",&m_gen_y32_max,"gen_y32_max/F");
+  m_outputTree->Branch("gen_y43_max",&m_gen_y43_max,"gen_y43_max/F");
+
+  m_outputTree->Branch("reco_y21",&m_reco_y21,"reco_y21/F");
+  m_outputTree->Branch("reco_y32",&m_reco_y32,"reco_y21/F");
+  m_outputTree->Branch("reco_y43",&m_reco_y43,"reco_y21/F");
+
+  m_outputTree->Branch("reco_y21_max",&m_reco_y21_max,"reco_y21_max/F");
+  m_outputTree->Branch("reco_y32_max",&m_reco_y32_max,"reco_y32_max/F");
+  m_outputTree->Branch("reco_y43_max",&m_reco_y43_max,"reco_y43_max/F");
+
   m_outputTree->Branch("true_E", &m_true_E,"true_E/F");
   m_outputTree->Branch("true_Px", &m_true_Px,"true_Px/F");
   m_outputTree->Branch("true_Py", &m_true_Py,"true_Py/F");
@@ -1171,6 +1217,11 @@ void HZAnalyzer::init() {
   m_outputTree->Branch("genjet_dij_21","std::vector< float >", &m_genjet_dij_21);
   m_outputTree->Branch("genjet_dij_32","std::vector< float >", &m_genjet_dij_32);
   m_outputTree->Branch("genjet_dij_43","std::vector< float >", &m_genjet_dij_43);
+
+  m_outputTree->Branch("genjet_dij_21_max","std::vector< float >", &m_genjet_dij_21_max);
+  m_outputTree->Branch("genjet_dij_32_max","std::vector< float >", &m_genjet_dij_32_max);
+  m_outputTree->Branch("genjet_dij_43_max","std::vector< float >", &m_genjet_dij_43_max);
+
   m_outputTree->Branch("genjet_CHFraction", "std::vector< float >", &m_genjet_CHFraction);
   m_outputTree->Branch("genjet_CHFraction_trackPtMin", "std::vector< float >", &m_genjet_CHFraction_trackPtMin);
   m_outputTree->Branch("genjet_PhFraction", "std::vector< float >", &m_genjet_PhFraction);
@@ -1337,6 +1388,9 @@ void HZAnalyzer::init() {
   m_outputTree->Branch("recojet_dij_21","std::vector< float >", &m_recojet_dij_21);
   m_outputTree->Branch("recojet_dij_32","std::vector< float >", &m_recojet_dij_32);
   m_outputTree->Branch("recojet_dij_43","std::vector< float >", &m_recojet_dij_43);
+  m_outputTree->Branch("recojet_dij_21_max","std::vector< float >", &m_recojet_dij_21_max);
+  m_outputTree->Branch("recojet_dij_32_max","std::vector< float >", &m_recojet_dij_32_max);
+  m_outputTree->Branch("recojet_dij_43_max","std::vector< float >", &m_recojet_dij_43_max);
   m_outputTree->Branch("recojet_CHFraction", "std::vector< float >", &m_recojet_CHFraction);
   m_outputTree->Branch("recojet_CHFraction_trackPtMin", "std::vector< float >", &m_recojet_CHFraction_trackPtMin);
   m_outputTree->Branch("recojet_PhFraction", "std::vector< float >", &m_recojet_PhFraction);
@@ -1668,6 +1722,21 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
   m_totPFO_MuFraction=0;
   m_totPFO_NHFraction=0;
 
+  m_gen_y21_max=0;
+  m_gen_y32_max=0;
+  m_gen_y43_max=0;
+
+  m_gen_y21=0;
+  m_gen_y32=0;
+  m_gen_y43=0;
+
+  m_reco_y21= 0;
+  m_reco_y32= 0;
+  m_reco_y43= 0;
+  m_reco_y21_max= 0;
+  m_reco_y32_max= 0;
+  m_reco_y43_max= 0;
+
   m_trueME_E->clear();
   m_trueME_Px->clear();
   m_trueME_Py->clear();
@@ -1728,6 +1797,9 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
   m_genjet_dij_21->clear();
   m_genjet_dij_32->clear();
   m_genjet_dij_43->clear();
+  m_genjet_dij_21_max->clear();
+  m_genjet_dij_32_max->clear();
+  m_genjet_dij_43_max->clear();
   m_genjet_CHFraction->clear();
   m_genjet_CHFraction_trackPtMin->clear();
   m_genjet_PhFraction->clear();
@@ -1893,6 +1965,9 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
   m_recojet_dij_21->clear();
   m_recojet_dij_32->clear();
   m_recojet_dij_43->clear();
+  m_recojet_dij_21_max->clear();
+  m_recojet_dij_32_max->clear();
+  m_recojet_dij_43_max->clear();
   m_recojet_CHFraction->clear();
   m_recojet_CHFraction_trackPtMin->clear();
   m_recojet_PhFraction->clear();
@@ -2524,6 +2599,14 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
 
 
     PseudoJetList genjets = _csgen->exclusive_jets((int)(2));
+
+    m_gen_y21_max=_csgen->exclusive_ymerge_max((int)(1));
+    m_gen_y32_max=_csgen->exclusive_ymerge_max((int)(2));
+    m_gen_y43_max=_csgen->exclusive_ymerge_max((int)(3));
+
+    m_gen_y21=_csgen->exclusive_ymerge((int)(1));
+    m_gen_y32=_csgen->exclusive_ymerge((int)(2));
+    m_gen_y43=_csgen->exclusive_ymerge((int)(3));
     
     unsigned int genjet_index_=0;
     for (std::vector<fastjet::PseudoJet>::iterator genjetIt = genjets.begin(); genjetIt != genjets.end(); ++genjetIt ) {
@@ -2761,7 +2844,10 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
 	m_genjet_dij_21->push_back(genjetIt->exclusive_subdmerge(1));
 	m_genjet_dij_32->push_back(genjetIt->exclusive_subdmerge(2));
 	m_genjet_dij_43->push_back(genjetIt->exclusive_subdmerge(3));
- 
+ 	m_genjet_dij_21_max->push_back(genjetIt->exclusive_subdmerge_max(1));
+	m_genjet_dij_32_max->push_back(genjetIt->exclusive_subdmerge_max(2));
+	m_genjet_dij_43_max->push_back(genjetIt->exclusive_subdmerge_max(3));
+
 	//std::cout<<"input const "<<_csgen->constituents((*genjetIt)).size()<<" subt output list "<<_csgen->constituents(subjets[0]).size()<<"/"<<_csgen->constituents(subjets[1]).size()<<std::endl;
 	int num_pi_sj=0;
 	int num_pi_sj_trackPtMin=0;
@@ -3084,6 +3170,9 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
 	m_genjet_dij_21->push_back(0);
 	m_genjet_dij_32->push_back(0);
 	m_genjet_dij_43->push_back(0);
+	m_genjet_dij_21_max->push_back(0);
+	m_genjet_dij_32_max->push_back(0);
+	m_genjet_dij_43_max->push_back(0);
 	m_genjet_nsubjettiness2->push_back(-1);
 	//m_genjet_nsubjettiness2_lrz->push_back(-1);
 	m_genjet_nsubjettiness3->push_back(-1);
@@ -3678,6 +3767,14 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
 
     fastjet::ClusterSequence*_csreco = new fastjet::ClusterSequence(recopjList, *_jetAlgoType);
     PseudoJetList recojets = _csreco->exclusive_jets((int)(2));
+
+    m_reco_y21_max=_csreco->exclusive_ymerge_max((int)(1));
+    m_reco_y32_max=_csreco->exclusive_ymerge_max((int)(2));
+    m_reco_y43_max=_csreco->exclusive_ymerge_max((int)(3));
+
+    m_reco_y21=_csreco->exclusive_ymerge((int)(1));
+    m_reco_y32=_csreco->exclusive_ymerge((int)(2));
+    m_reco_y43=_csreco->exclusive_ymerge((int)(3));
        
     unsigned int recojet_index_=0;
     for (std::vector<fastjet::PseudoJet>::iterator recojetIt = recojets.begin(); recojetIt != recojets.end(); ++recojetIt ) {
@@ -3917,6 +4014,9 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
 	m_recojet_dij_21->push_back(recojetIt->exclusive_subdmerge(1));
 	m_recojet_dij_32->push_back(recojetIt->exclusive_subdmerge(2));
 	m_recojet_dij_43->push_back(recojetIt->exclusive_subdmerge(3));
+	m_recojet_dij_21_max->push_back(recojetIt->exclusive_subdmerge_max(1));
+	m_recojet_dij_32_max->push_back(recojetIt->exclusive_subdmerge_max(2));
+	m_recojet_dij_43_max->push_back(recojetIt->exclusive_subdmerge_max(3));
 
 	int num_pi_sj=0;
 	int num_pi_sj_trackPtMin=0;
@@ -4246,6 +4346,9 @@ void HZAnalyzer::processEvent( LCEvent* evt ) {
 	m_recojet_dij_21->push_back(0);
 	m_recojet_dij_32->push_back(0);
 	m_recojet_dij_43->push_back(0);
+	m_recojet_dij_21_max->push_back(0);
+	m_recojet_dij_32_max->push_back(0);
+	m_recojet_dij_43_max->push_back(0);
 	m_recojet_nsubjettiness2->push_back(-1);
 	m_recojet_nsubjettiness2_lrz->push_back(-1);
 	m_recojet_nsubjettiness3->push_back(-1);
