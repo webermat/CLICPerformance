@@ -35,12 +35,12 @@ TrueMCintoRecoForJets::TrueMCintoRecoForJets() : Processor("TrueMCintoRecoForJet
     registerProcessorParameter("vetoBosonLeptons",
 			       "leptons from boson veto flag for MC truth",
 			       m_vetoBosonLeptons,
-			       bool("false"));
+			       bool(false));
 
     registerProcessorParameter("vetoBosonLeptonsOnReco",
 			       "leptons from boson veto flag for Reco",
 			       m_vetoBosonLeptonsOnReco,
-			       bool("false"));
+			       bool(false));
 
     registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
                             "RecoParticleInputCollectionName",
