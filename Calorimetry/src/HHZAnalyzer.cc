@@ -36,7 +36,7 @@ HHZAnalyzer::HHZAnalyzer() : Processor("HHZAnalyzer")
     registerInputCollection( LCIO::MCPARTICLE,
 			     "MCParticleCollectionName",
 			     "Name of the MCParticle input collection",
-			     m_inputMCParticleCollection,
+		     m_inputMCParticleCollection,
 			     std::string("MCPhysicsParticles"));
 
     registerInputCollection( LCIO::RECONSTRUCTEDPARTICLE,
@@ -248,6 +248,15 @@ void HHZAnalyzer::init() {
   m_trueME_PDGID_D1= new std::vector<int>();
   m_trueME_ParentID= new std::vector<int>();
   //m_trueME_index= new std::vector<int>();
+
+  //for events where we save the trueME, particle neutrino summed up vector
+  //matched to H1,H2,Z (in exactly this order), spatial matching angle ->10 degrees
+  //so vector of size 3, in case we have two partons within the 10 degree angle, 
+  //assign to spatially closest parton
+  m_trueME_Inv_E= new std::vector<float>();
+  m_trueME_Inv_Px= new std::vector<float>();
+  m_trueME_Inv_Py= new std::vector<float>();
+  m_trueME_Inv_Pz= new std::vector<float>();
   
   m_genTrueLepPh_E= new std::vector<float>();
   m_genTrueLepPh_Px= new std::vector<float>();
@@ -685,6 +694,11 @@ void HHZAnalyzer::init() {
   m_trueME_PDGID_D1->clear();
   m_trueME_ParentID->clear();
   //m_trueME_index->clear();
+
+  m_trueME_Inv_E->clear();
+  m_trueME_Inv_Px->clear();
+  m_trueME_Inv_Py->clear();
+  m_trueME_Inv_Pz->clear();
   
   m_genTrueLepPh_E->clear();
   m_genTrueLepPh_Px->clear();
@@ -1174,6 +1188,12 @@ void HHZAnalyzer::init() {
     m_outputTree->Branch("trueME_PDGID_D1", "std::vector< int >", &m_trueME_PDGID_D1);
     m_outputTree->Branch("trueME_ParentID", "std::vector< int >", &m_trueME_ParentID);
     //m_outputTree->Branch("trueME_index", "std::vector< int >", &m_trueME_index);
+    //neutrino quantities, separated by spatial matching to H,H,Z partons
+    m_outputTree->Branch("trueInv_DRPart_E", "std::vector< float >", &m_trueME_Inv_E);
+    m_outputTree->Branch("trueInv_DRPart_Px", "std::vector< float >", &m_trueME_Inv_Px);
+    m_outputTree->Branch("trueInv_DRPart_Py", "std::vector< float >", &m_trueME_Inv_Py);
+    m_outputTree->Branch("trueInv_DRPart_Pz", "std::vector< float >", &m_trueME_Inv_Pz);
+
   }
   m_outputTree->Branch("genTrueLepPh_E", "std::vector< float >", &m_genTrueLepPh_E);
   m_outputTree->Branch("genTrueLepPh_Px", "std::vector< float >", &m_genTrueLepPh_Px);
@@ -1758,6 +1778,11 @@ void HHZAnalyzer::processEvent( LCEvent* evt ) {
   m_trueME_PDGID_D1->clear();
   m_trueME_ParentID->clear();
   //m_trueME_index->clear();
+
+  m_trueME_Inv_E->clear();
+  m_trueME_Inv_Px->clear();
+  m_trueME_Inv_Py->clear();
+  m_trueME_Inv_Pz->clear();
   
   m_genTrueLepPh_E->clear();
   m_genTrueLepPh_Px->clear();
@@ -2431,6 +2456,20 @@ void HHZAnalyzer::processEvent( LCEvent* evt ) {
     int nMCP = mcColl->getNumberOfElements();
 
     int boson_counter=0;
+    TLorentzVector tempH1(0,0,0,0);
+    TLorentzVector tempH2(0,0,0,0);
+    TLorentzVector tempZ(0,0,0,0);
+
+    TLorentzVector tempInv_H1(0,0,0,0);
+    TLorentzVector tempInv_H2(0,0,0,0);
+    TLorentzVector tempInv_Z(0,0,0,0);
+
+    //m_trueME_Inv_E);
+    //m_outputTree->Branch("trueME_Inv_Px", "std::vector< float >", &m_trueME_Inv_Px);
+    //m_outputTree->Branch("trueME_Inv_Py", "std::vector< float >", &m_trueME_Inv_Py);
+    //m_outputTree->Branch("trueME_Inv_Pz", "std::vector< float >", &m_trueME_Inv_Pz
+
+
 
     for(int m=0;m<nMCP;m++){
       MCParticle *mcp = static_cast<MCParticle*>(mcColl->getElementAt(m));
@@ -2443,8 +2482,23 @@ void HHZAnalyzer::processEvent( LCEvent* evt ) {
       //then fill daughters from H2 --> H1+5,H1+6, should be H2+4,H2+5
       //then fill daugthers from Z
        //of that daughter choose the decay product (typically bbar)
-      if(m>3 && m<11){
+      if(m>3 && m<11 && m_saveMEInfo){
 	if(mcp->getPDG()==25 || mcp->getPDG()==23){
+	  if(boson_counter<3){
+	    //consider first 3 bosons
+	    TLorentzVector temp(0,0,0,0);
+	    temp.SetPxPyPzE(mcp->getMomentum()[0],mcp->getMomentum()[1],mcp->getMomentum()[2],mcp->getEnergy());
+	    if(mcp->getPDG()==23){
+	      tempZ=temp;
+	    }
+	    if(mcp->getPDG()==25){
+	      if(tempH1.M()==0){
+		tempH1=temp;
+	      }else{
+		tempH2=temp;
+	      }
+	    }
+	  }
 	  boson_counter+=1;
 	}
 	m_trueME_E->push_back(mcp->getEnergy());
@@ -2462,9 +2516,14 @@ void HHZAnalyzer::processEvent( LCEvent* evt ) {
       }
       //history order changes in case H decays into W or Z bosons, so taking this into account
       //push back H1 daughters, push-back
-      if(m==10){
+      if(m_saveMEInfo && m==10){
 	if(boson_counter!=3){
 	  std::cout<<"horrible case, where are the bosons"<<boson_counter<<std::endl;
+	}else{
+	  //all bosons had been found
+	  if(tempH1.M()==0 || tempH2.M()==0 || tempZ.M()==0){
+	    std::cout<<" bosons should have been filled, but masses are 0 "<< tempH1.M() <<"/"<<tempH2.M()<<"/"<<tempZ.M()<<std::endl;
+	  }
 	}
 	//mcp 2 should be H1
 	MCParticle *mcp2 = static_cast<MCParticle*>(mcColl->getElementAt(8));
@@ -2674,6 +2733,24 @@ void HHZAnalyzer::processEvent( LCEvent* evt ) {
 
       if(mcp->getGeneratorStatus()==1){
 	if(abs(mcp->getPDG())==12 || abs(mcp->getPDG())==14 || abs(mcp->getPDG())==16){
+	  if(m_saveMEInfo && boson_counter==3){
+	    //fill the invisible matched vectors --> need to be 
+	    TLorentzVector temp(0,0,0,0);
+	    temp.SetPxPyPzE(mcp->getMomentum()[0],mcp->getMomentum()[1],mcp->getMomentum()[2],mcp->getEnergy());
+	    if ( temp.Angle(tempH1.Vect())<temp.Angle(tempH2.Vect())){
+	      if(temp.Angle(tempH1.Vect())<temp.Angle(tempZ.Vect())){
+		tempInv_H1+=temp;
+	      }else{
+		tempInv_Z+=temp;
+	      }
+	    }else{
+	      if(temp.Angle(tempH2.Vect())<temp.Angle(tempZ.Vect())){
+		tempInv_H2+=temp;
+	      }else{
+		tempInv_Z+=temp;
+	      }
+	    }
+	  }
 	  m_true_inv_E+=mcp->getEnergy();
 	  m_true_inv_Px+=mcp->getMomentum()[0];
 	  m_true_inv_Py+=mcp->getMomentum()[1];
@@ -2714,6 +2791,23 @@ void HHZAnalyzer::processEvent( LCEvent* evt ) {
       m_true_NHFraction=m_true_NHFraction/m_true_E;
     }
     //std::cout<<"sqrtS is "<<temp_sqrtS.M()<<std::endl;
+    if(m_saveMEInfo){
+      m_trueME_Inv_E->push_back(tempInv_H1.E());
+      m_trueME_Inv_Px->push_back(tempInv_H1.Px());
+      m_trueME_Inv_Py->push_back(tempInv_H1.Py());
+      m_trueME_Inv_Pz->push_back(tempInv_H1.Pz());
+      
+      m_trueME_Inv_E->push_back(tempInv_H2.E());
+      m_trueME_Inv_Px->push_back(tempInv_H2.Px());
+      m_trueME_Inv_Py->push_back(tempInv_H2.Py());
+      m_trueME_Inv_Pz->push_back(tempInv_H2.Pz());
+      
+      m_trueME_Inv_E->push_back(tempInv_Z.E());
+      m_trueME_Inv_Px->push_back(tempInv_Z.Px());
+      m_trueME_Inv_Py->push_back(tempInv_Z.Py());
+      m_trueME_Inv_Pz->push_back(tempInv_Z.Pz());
+    }
+
   }
  
   LCCollection* particleMCJetIn(NULL);

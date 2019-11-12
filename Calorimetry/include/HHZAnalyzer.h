@@ -114,6 +114,16 @@ protected:
     std::vector<int>* m_trueME_ParentID=NULL;
     //std::vector<int>* m_trueME_index=NULL;
 
+    //for events where we save the trueME, particle neutrino summed up vector
+    //matched to H1,H2,Z (in exactly this order), spatially matched to most closest parton
+    //so vector of size 3, we ignore cases where neutrino is branched of at a larger angle (of overlapping jets, closeby partons)
+    //assign in any case to spatially closest parton, no use of MC history
+    std::vector<float>* m_trueME_Inv_E=NULL;
+    std::vector<float>* m_trueME_Inv_Px=NULL;
+    std::vector<float>* m_trueME_Inv_Py=NULL;
+    std::vector<float>* m_trueME_Inv_Pz=NULL;
+
+
     std::vector<float>* m_genTrueLepPh_E=NULL;
     std::vector<float>* m_genTrueLepPh_Px=NULL;
     std::vector<float>* m_genTrueLepPh_Py=NULL;
